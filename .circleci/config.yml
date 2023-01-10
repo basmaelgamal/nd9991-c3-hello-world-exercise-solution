@@ -1,3 +1,4 @@
+
 version: 2.1
 # Use a package of configuration called an orb.
 orbs:
@@ -9,10 +10,11 @@ jobs:
   myjob1:  # Choose any name, such as `build`
     # The primary container, where your job's commands will run
     docker:
-      - image: circleci/node:13.8.0
+      - image: 
     steps:
       - checkout # check out the code in the project directory
       - run: echo "hello world" # run the `echo` command
+# Sequential workfl
   create_infrastructure: 
     docker:
       - image: amazon/aws-cli
@@ -25,9 +27,28 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
+              
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          # You can get this ID in the section where you registered the SSH Key
+          fingerprints: ["b8:9e:a5:eb:ad:bf:76:16:a6:dd:50:ab:36:aa:c1:69"] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i inventory.txt main4.yml
 workflows:
   # Name the workflow
   myWorkflow:
     jobs:
       - myjob1
-      - create_infrastructure     
+      - myjob2   
+      - create_infrastructure   
+      - configure_infrastructure
