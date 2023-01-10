@@ -15,7 +15,7 @@ jobs:
       - run: echo "hello world" # run the `echo` command
   create_infrastructure: 
     docker:
-      - image: Ubuntu/aws-cli
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
